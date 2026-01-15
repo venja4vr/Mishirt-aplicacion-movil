@@ -18,7 +18,7 @@ import com.example.mishirt_movil.view.SettingsScreen
 import com.example.mishirt_movil.viewmodel.SettingsViewModel
 
 
-
+// hola
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
