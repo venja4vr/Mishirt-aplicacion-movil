@@ -4,15 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.mishirt_movil.ui.theme.Mishirt_movilTheme
-import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.collectAsState
+import com.example.mishirt_movil.view.HomeScreen
+import com.example.mishirt_movil.viewmodel.HomeViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.mishirt_movil.view.SettingsScreen
+import com.example.mishirt_movil.viewmodel.SettingsViewModel
+
 
 
 class MainActivity : ComponentActivity() {
@@ -20,15 +24,37 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Mishirt_movilTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                ) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    )
+            val settingsVm: SettingsViewModel = viewModel()
+            val settingsState = settingsVm.uiState.collectAsState().value
+
+            Mishirt_movilTheme(
+                darkTheme = settingsState.isDarkTheme
+            ) {
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = "home"
+                ) {
+                    composable("home") {
+                        val homeVm: HomeViewModel = viewModel()
+                        val homeState = homeVm.uiState.collectAsState().value
+
+                        HomeScreen(
+                            state = homeState,
+                            onProfileClick = homeVm::onProfileClick,
+                            onSettingsClick = { navController.navigate("settings") }
+                        )
+                    }
+
+                    composable("settings") {
+                        SettingsScreen(
+                            state = settingsState,
+                            onBack = { navController.popBackStack() },
+                            onToggleTheme = settingsVm::toggleTheme,
+                            onToggleNotifications = settingsVm::toggleNotifications
+                        )
+                    }
                 }
             }
         }
