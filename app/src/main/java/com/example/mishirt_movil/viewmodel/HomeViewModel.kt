@@ -17,5 +17,6 @@ class HomeViewModel : ViewModel() {
 
     fun onSettingsClick() {
         // boton para ajustes
+        
     }
 }
