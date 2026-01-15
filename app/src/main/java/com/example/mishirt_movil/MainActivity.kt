@@ -9,8 +9,6 @@ import androidx.compose.runtime.collectAsState
 import com.example.mishirt_movil.view.HomeScreen
 import com.example.mishirt_movil.viewmodel.HomeViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
