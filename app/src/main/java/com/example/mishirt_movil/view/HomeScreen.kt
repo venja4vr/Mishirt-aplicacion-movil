@@ -68,6 +68,14 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             item {
+                Text(
+                    text = "Nuevos lanzamientos",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            item {
                 CarouselSection(items = state.carousel)
             }
 
@@ -85,6 +93,7 @@ fun HomeScreen(
     }
 }
 
+
 @Composable
 private fun CarouselSection(items: List<CarouselItemUi>) {
     if (items.isEmpty()) return
@@ -99,7 +108,7 @@ private fun CarouselSection(items: List<CarouselItemUi>) {
             state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(240.dp)
         ) { page ->
             val item = items[page]
 
@@ -168,7 +177,7 @@ private fun ProductCardVertical(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(340.dp)
             )
 
             Column(modifier = Modifier.padding(12.dp)) {
