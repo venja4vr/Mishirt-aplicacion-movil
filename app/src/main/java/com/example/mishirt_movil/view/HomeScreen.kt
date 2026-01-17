@@ -25,7 +25,7 @@ import com.example.mishirt_movil.model.CarouselItemUi
 import com.example.mishirt_movil.model.HomeUiState
 import com.example.mishirt_movil.model.ProductUi
 import com.example.mishirt_movil.ui.theme.MossGreen
-
+import com.example.mishirt_movil.ui.theme.SectionTitleStyle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -70,7 +70,8 @@ fun HomeScreen(
             item {
                 Text(
                     text = "Nuevos lanzamientos",
-                    style = MaterialTheme.typography.titleLarge
+                    style = SectionTitleStyle
+
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -82,7 +83,8 @@ fun HomeScreen(
             item {
                 Text(
                     text = "Productos destacados",
-                    style = MaterialTheme.typography.titleLarge
+                    style = SectionTitleStyle
+
                 )
             }
 
