@@ -1,20 +1,31 @@
 package com.example.mishirt_movil
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mishirt_movil.ui.theme.Mishirt_movilTheme
+import com.example.mishirt_movil.ui.theme.MossGreen
 import com.example.mishirt_movil.view.AppTopBar
 import com.example.mishirt_movil.view.AuthScreen
 import com.example.mishirt_movil.view.HomeScreen
@@ -23,13 +34,16 @@ import com.example.mishirt_movil.view.SettingsScreen
 import com.example.mishirt_movil.viewmodel.HomeViewModel
 import com.example.mishirt_movil.viewmodel.SettingsViewModel
 import com.example.mishirt_movil.viewmodel.UserViewModel
+import android.graphics.Color as AndroidColor
 
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = Color.TRANSPARENT
+        window.statusBarColor = AndroidColor.TRANSPARENT
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         setContent {
@@ -42,26 +56,54 @@ class MainActivity : ComponentActivity() {
             Mishirt_movilTheme(darkTheme = settingsState.isDarkTheme) {
                 val navController = rememberNavController()
 
+                val backStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = backStackEntry?.destination?.route
+
                 Scaffold(
                     topBar = {
-                        AppTopBar(
-                            onTitleClick = {
-                                navController.navigate("home") {
-                                    popUpTo("home") { inclusive = false }
-                                    launchSingleTop = true
-                                }
-                            },
-                            onProfileClick = {
-                                if (userState.cuentaCreada) {
-                                    navController.navigate("profile")
-                                } else {
-                                    navController.navigate("auth")
-                                }
-                            },
-                            onSettingsClick = {
-                                navController.navigate("settings")
+                        when (currentRoute) {
+                            "home" -> {
+                                AppTopBar(
+                                    onTitleClick = {
+                                        navController.navigate("home") {
+                                            popUpTo("home") { inclusive = false }
+                                            launchSingleTop = true
+                                        }
+                                    },
+                                    onProfileClick = {
+                                        if (userState.cuentaCreada) {
+                                            navController.navigate("profile")
+                                        } else {
+                                            navController.navigate("auth")
+                                        }
+                                    },
+                                    onSettingsClick = { navController.navigate("settings") }
+                                )
                             }
-                        )
+
+                            "auth" -> {
+                                TopAppBar(
+                                    title = { Text(text = "Crear cuenta", color = Color.White) },
+                                    navigationIcon = {
+                                        IconButton(onClick = { navController.popBackStack() }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.ArrowBack,
+                                                contentDescription = "Volver",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    },
+                                    colors = TopAppBarDefaults.topAppBarColors(
+                                        containerColor = MossGreen
+                                    )
+                                )
+                            }
+
+                            else -> {
+                                // settings ya tiene su “header” dentro del SettingsScreen.
+                                // profile puedes dejarlo sin topbar por ahora.
+                            }
+                        }
                     }
                 ) { innerPadding ->
 
@@ -74,18 +116,7 @@ class MainActivity : ComponentActivity() {
                         composable("home") {
                             val homeVm: HomeViewModel = viewModel()
                             val homeState = homeVm.uiState.collectAsState().value
-
-                            HomeScreen(
-                                state = homeState,
-                                onProfileClick = {
-                                    if (userState.cuentaCreada) {
-                                        navController.navigate("profile")
-                                    } else {
-                                        navController.navigate("auth")
-                                    }
-                                },
-                                onSettingsClick = { navController.navigate("settings") }
-                            )
+                            HomeScreen(state = homeState)
                         }
 
                         composable("settings") {

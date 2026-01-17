@@ -2,17 +2,26 @@ package com.example.mishirt_movil.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,72 +33,36 @@ import androidx.compose.ui.unit.dp
 import com.example.mishirt_movil.model.CarouselItemUi
 import com.example.mishirt_movil.model.HomeUiState
 import com.example.mishirt_movil.model.ProductUi
-import com.example.mishirt_movil.ui.theme.MossGreen
 import com.example.mishirt_movil.ui.theme.SectionTitleStyle
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    state: HomeUiState,
-    onProfileClick: () -> Unit,
-    onSettingsClick: () -> Unit
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(state.appName, color = Color.White) },
-                actions = {
-                    IconButton(onClick = onProfileClick) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Perfil",
-                            tint = Color.White
-                        )
-                    }
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = "Ajustes",
-                            tint = Color.White
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MossGreen
-                )
+fun HomeScreen(state: HomeUiState) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        item {
+            Text(
+                text = "Nuevos lanzamientos",
+                style = SectionTitleStyle
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
+        item {
+            CarouselSection(items = state.carousel)
+        }
+
+        item {
+            Text(
+                text = "Productos destacados",
+                style = SectionTitleStyle
             )
         }
-    ) { innerPadding ->
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            item {
-                Text(
-                    text = "Nuevos lanzamientos",
-                    style = SectionTitleStyle
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-            }
-
-            item {
-                CarouselSection(items = state.carousel)
-            }
-
-            item {
-                Text(
-                    text = "Productos destacados",
-                    style = SectionTitleStyle
-                )
-            }
-
-            items(state.featuredProducts) { product ->
-                ProductCardVertical(product = product)
-            }
+        items(state.featuredProducts) { product ->
+            ProductCardVertical(product = product)
         }
     }
 }
@@ -195,4 +168,3 @@ private fun ProductCardVertical(
         }
     }
 }
-
