@@ -21,7 +21,7 @@ class HomeViewModel : ViewModel() {
             featuredProducts = listOf(
                 ProductUi("Camiseta Chile", "$19.990", R.drawable.shirt_chile),
                 ProductUi("Camiseta Japón", "$21.990", R.drawable.shirt_japan),
-                ProductUi("Camiseta Portugal", "$18.990", R.drawable.shirt_chile) // temporal
+                ProductUi("Camiseta Portugal", "$18.990", R.drawable.shirt_portugal) // temporal
             )
         )
     )

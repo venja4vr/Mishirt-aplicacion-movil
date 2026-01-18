@@ -28,9 +28,11 @@ import com.example.mishirt_movil.ui.theme.Mishirt_movilTheme
 import com.example.mishirt_movil.ui.theme.MossGreen
 import com.example.mishirt_movil.view.AppTopBar
 import com.example.mishirt_movil.view.AuthScreen
+import com.example.mishirt_movil.view.CatalogScreen
 import com.example.mishirt_movil.view.HomeScreen
 import com.example.mishirt_movil.view.ProfileScreen
 import com.example.mishirt_movil.view.SettingsScreen
+import com.example.mishirt_movil.viewmodel.CatalogViewModel
 import com.example.mishirt_movil.viewmodel.HomeViewModel
 import com.example.mishirt_movil.viewmodel.SettingsViewModel
 import com.example.mishirt_movil.viewmodel.UserViewModel
@@ -62,6 +64,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         when (currentRoute) {
+
                             "home" -> {
                                 AppTopBar(
                                     onTitleClick = {
@@ -70,6 +73,7 @@ class MainActivity : ComponentActivity() {
                                             launchSingleTop = true
                                         }
                                     },
+                                    onCatalogClick = { navController.navigate("catalog") },
                                     onProfileClick = {
                                         if (userState.cuentaCreada) {
                                             navController.navigate("profile")
@@ -84,6 +88,24 @@ class MainActivity : ComponentActivity() {
                             "auth" -> {
                                 TopAppBar(
                                     title = { Text(text = "Crear cuenta", color = Color.White) },
+                                    navigationIcon = {
+                                        IconButton(onClick = { navController.popBackStack() }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.ArrowBack,
+                                                contentDescription = "Volver",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    },
+                                    colors = TopAppBarDefaults.topAppBarColors(
+                                        containerColor = MossGreen
+                                    )
+                                )
+                            }
+
+                            "catalog" -> {
+                                TopAppBar(
+                                    title = { Text(text = "Catálogo", color = Color.White) },
                                     navigationIcon = {
                                         IconButton(onClick = { navController.popBackStack() }) {
                                             Icon(
@@ -117,6 +139,19 @@ class MainActivity : ComponentActivity() {
                             val homeVm: HomeViewModel = viewModel()
                             val homeState = homeVm.uiState.collectAsState().value
                             HomeScreen(state = homeState)
+                        }
+
+                        composable("catalog") {
+                            val catalogVm: CatalogViewModel = viewModel()
+                            val products = catalogVm.products.collectAsState().value
+
+                            CatalogScreen(
+                                products = products,
+                                onProductClick = { product ->
+                                    // Siguiente paso: navegar a pantalla de detalles con el producto seleccionado
+                                    // navController.navigate("details/${product.id}")
+                                }
+                            )
                         }
 
                         composable("settings") {
