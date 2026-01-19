@@ -24,12 +24,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.mishirt_movil.repository.ProductsRepository
 import com.example.mishirt_movil.ui.theme.Mishirt_movilTheme
 import com.example.mishirt_movil.ui.theme.MossGreen
 import com.example.mishirt_movil.view.AppTopBar
 import com.example.mishirt_movil.view.AuthScreen
 import com.example.mishirt_movil.view.CatalogScreen
 import com.example.mishirt_movil.view.HomeScreen
+import com.example.mishirt_movil.view.ProductDetailScreen
 import com.example.mishirt_movil.view.ProfileScreen
 import com.example.mishirt_movil.view.SettingsScreen
 import com.example.mishirt_movil.viewmodel.CatalogViewModel
@@ -37,6 +39,8 @@ import com.example.mishirt_movil.viewmodel.HomeViewModel
 import com.example.mishirt_movil.viewmodel.SettingsViewModel
 import com.example.mishirt_movil.viewmodel.UserViewModel
 import android.graphics.Color as AndroidColor
+import androidx.compose.ui.unit.dp
+
 
 class MainActivity : ComponentActivity() {
 
@@ -121,6 +125,24 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
+                            "details/{productId}" -> {
+                                TopAppBar(
+                                    title = { Text(text = "Detalle", color = Color.White) },
+                                    navigationIcon = {
+                                        IconButton(onClick = { navController.popBackStack() }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.ArrowBack,
+                                                contentDescription = "Volver",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    },
+                                    colors = TopAppBarDefaults.topAppBarColors(
+                                        containerColor = MossGreen
+                                    )
+                                )
+                            }
+
                             else -> {
                                 // settings ya tiene su “header” dentro del SettingsScreen.
                                 // profile puedes dejarlo sin topbar por ahora.
@@ -138,7 +160,16 @@ class MainActivity : ComponentActivity() {
                         composable("home") {
                             val homeVm: HomeViewModel = viewModel()
                             val homeState = homeVm.uiState.collectAsState().value
-                            HomeScreen(state = homeState)
+
+                            HomeScreen(
+                                state = homeState,
+                                onProductClick = { product ->
+                                    navController.navigate("details/${product.id}")
+                                },
+                                onBannerClick = { productId ->
+                                    navController.navigate("details/$productId")
+                                }
+                            )
                         }
 
                         composable("catalog") {
@@ -148,10 +179,23 @@ class MainActivity : ComponentActivity() {
                             CatalogScreen(
                                 products = products,
                                 onProductClick = { product ->
-                                    // Siguiente paso: navegar a pantalla de detalles con el producto seleccionado
-                                    // navController.navigate("details/${product.id}")
+                                    navController.navigate("details/${product.id}")
                                 }
                             )
+                        }
+
+                        composable("details/{productId}") { entry ->
+                            val productId = entry.arguments?.getString("productId")
+                            val product = productId?.let { ProductsRepository.getById(it) }
+
+                            if (product != null) {
+                                ProductDetailScreen(product = product)
+                            } else {
+                                Text(
+                                    text = "Producto no encontrado",
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
                         }
 
                         composable("settings") {

@@ -8,12 +8,19 @@ data class HomeUiState(
 
 data class CarouselItemUi(
     val title: String,
-    val imageRes: Int
+    val imageRes: Int,
+    val productId: String
 )
+
 
 data class ProductUi(
+    val id: String,
     val title: String,
     val price: String,
-    val imageRes: Int
+    val imageRes: Int,
+    val description: String = "",
+    val material: String = "",
+    val continent: String = "",
+    val sizes: List<String> = emptyList(),
+    val isFeatured: Boolean = false
 )
-

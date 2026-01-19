@@ -2,6 +2,7 @@ package com.example.mishirt_movil.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +37,11 @@ import com.example.mishirt_movil.model.ProductUi
 import com.example.mishirt_movil.ui.theme.SectionTitleStyle
 
 @Composable
-fun HomeScreen(state: HomeUiState) {
+fun HomeScreen(
+    state: HomeUiState,
+    onProductClick: (ProductUi) -> Unit,
+    onBannerClick: (String) -> Unit
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -51,7 +56,10 @@ fun HomeScreen(state: HomeUiState) {
         }
 
         item {
-            CarouselSection(items = state.carousel)
+            CarouselSection(
+                items = state.carousel,
+                onBannerClick = onBannerClick
+            )
         }
 
         item {
@@ -62,13 +70,20 @@ fun HomeScreen(state: HomeUiState) {
         }
 
         items(state.featuredProducts) { product ->
-            ProductCardVertical(product = product)
+            ProductCardVertical(
+                product = product,
+                onClick = { onProductClick(product) }
+            )
         }
     }
 }
 
 @Composable
-private fun CarouselSection(items: List<CarouselItemUi>) {
+private fun CarouselSection(
+    items: List<CarouselItemUi>,
+    onBannerClick: (String) -> Unit
+) {
+
     if (items.isEmpty()) return
 
     val pagerState = rememberPagerState(
@@ -86,9 +101,12 @@ private fun CarouselSection(items: List<CarouselItemUi>) {
             val item = items[page]
 
             Card(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { onBannerClick(item.productId) },
                 shape = RoundedCornerShape(16.dp)
             ) {
+
                 Box(modifier = Modifier.fillMaxSize()) {
                     Image(
                         painter = painterResource(id = item.imageRes),
@@ -137,10 +155,13 @@ private fun CarouselSection(items: List<CarouselItemUi>) {
 @Composable
 private fun ProductCardVertical(
     product: ProductUi,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp)
     ) {
         Column {
