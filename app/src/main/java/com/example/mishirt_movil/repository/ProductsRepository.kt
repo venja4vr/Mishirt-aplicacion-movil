@@ -23,7 +23,7 @@ object ProductsRepository {
             title = "Camiseta Japón",
             price = "$21.990",
             imageRes = R.drawable.shirt_japan,
-            description = "Camiseta de la selección de Japón 2025, liviana y cómoda.",
+            description = "Camiseta de la selección de Japón 2025.",
             material = "Poliéster deportivo (transpirable)",
             continent = "Asia",
             sizes = listOf("S", "M", "L", "XL"),
@@ -60,7 +60,7 @@ object ProductsRepository {
             material = "Poliéster deportivo",
             continent = "Europa",
             sizes = listOf("S", "M", "L", "XL"),
-            isFeatured = true
+            isFeatured = false
         ),
         ProductUi(
             id = "marruecos",
@@ -71,7 +71,7 @@ object ProductsRepository {
             material = "Poliéster deportivo",
             continent = "Africa",
             sizes = listOf("S", "M", "L", "XL"),
-            isFeatured = false
+            isFeatured = true
         ),
         ProductUi(
             id = "colombia",
