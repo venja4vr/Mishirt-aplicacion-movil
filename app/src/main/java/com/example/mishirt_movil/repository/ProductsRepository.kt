@@ -5,7 +5,7 @@ import com.example.mishirt_movil.model.ProductUi
 
 object ProductsRepository {
 
-    // Lista única (fuente de verdad) para Home, Catálogo y Detalle
+    // Lista única para Home, Catálogo y Detalle
     val products: List<ProductUi> = listOf(
         ProductUi(
             id = "chile",

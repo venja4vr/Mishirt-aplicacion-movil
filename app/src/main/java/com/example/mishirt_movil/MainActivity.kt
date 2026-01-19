@@ -144,8 +144,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             else -> {
-                                // settings ya tiene su “header” dentro del SettingsScreen.
-                                // profile puedes dejarlo sin topbar por ahora.
+
                             }
                         }
                     }

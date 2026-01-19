@@ -42,7 +42,7 @@ fun CatalogScreen(
     onProductClick: (ProductUi) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Lista FIJA (así siempre aparece África aunque no haya productos todavía)
+
     val continents = listOf(
         "Todos",
         "América",

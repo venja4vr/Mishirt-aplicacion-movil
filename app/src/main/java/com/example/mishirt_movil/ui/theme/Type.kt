@@ -31,5 +31,5 @@ val ZalandoSansExpanded = FontFamily(
     )
 )
 
-// Tipografías generales de la app (se dejan por defecto)
+// Tipografías generales de la app
 val Typography = Typography()
