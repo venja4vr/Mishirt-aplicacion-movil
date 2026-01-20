@@ -4,6 +4,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.mishirt_movil.R
@@ -21,5 +22,14 @@ val SectionTitleStyle = TextStyle(
     letterSpacing = 0.5.sp
 )
 
-// Tipografías generales de la app (se dejan por defecto)
+// Fuente nueva para Detalle (res/font/zalando_sans_expanded_italic_variable.ttf)
+val ZalandoSansExpanded = FontFamily(
+    Font(
+        resId = R.font.zalando_sans_expanded_italic_variable,
+        weight = FontWeight.Normal,
+        style = FontStyle.Italic
+    )
+)
+
+// Tipografías generales de la app
 val Typography = Typography()
