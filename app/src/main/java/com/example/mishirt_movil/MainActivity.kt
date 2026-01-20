@@ -186,7 +186,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             else -> {
-                                // settings usa su propio header interno
+
                             }
                         }
                     }
@@ -234,9 +234,6 @@ class MainActivity : ComponentActivity() {
                                     product = product,
                                     onAddToCart = { size ->
                                         cartVm.add(product, size)
-                                    },
-                                    onGoToCart = {
-                                        navController.navigate("cart")
                                     }
                                 )
                             } else {
@@ -296,7 +293,7 @@ class MainActivity : ComponentActivity() {
                         composable("profile") {
                             ProfileScreen(
                                 state = userState,
-                                onSetPhoto = userVm::setPhoto
+                                //onSetPhoto = userVm::setPhoto
                             )
                         }
                     }

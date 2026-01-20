@@ -20,7 +20,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,16 +34,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.mishirt_movil.model.ProductUi
 import com.example.mishirt_movil.ui.theme.MossGreen
+import com.example.mishirt_movil.ui.theme.ZalandoSansExpanded
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(
     product: ProductUi,
-    onAddToCart: (String) -> Unit,
-    onGoToCart: () -> Unit
+    onAddToCart: (String) -> Unit
 ) {
     val context = LocalContext.current
     var selectedSize by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val titleStyle = MaterialTheme.typography.titleLarge.copy(fontFamily = ZalandoSansExpanded)
+    val priceStyle = MaterialTheme.typography.titleMedium.copy(fontFamily = ZalandoSansExpanded)
+    val sectionTitleStyle = MaterialTheme.typography.titleMedium.copy(fontFamily = ZalandoSansExpanded)
+    val bodyStyle = MaterialTheme.typography.bodyMedium.copy(fontFamily = ZalandoSansExpanded)
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -66,25 +70,48 @@ fun ProductDetailScreen(
         }
 
         item {
-            Text(text = product.title, style = MaterialTheme.typography.titleLarge)
+            Text(text = product.title, style = titleStyle)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = product.price,
-                style = MaterialTheme.typography.titleMedium,
+                style = priceStyle,
                 color = MaterialTheme.colorScheme.primary
             )
         }
 
+        // Descripción (título + texto debajo)
         if (product.description.isNotBlank()) {
-            item { Text(text = product.description) }
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(text = "Descripción", style = sectionTitleStyle)
+                    Text(text = product.description, style = bodyStyle)
+                }
+            }
         }
 
+        // Material (título + texto debajo)
         if (product.material.isNotBlank()) {
-            item { Text(text = "material: ${product.material}") }
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(text = "Material", style = sectionTitleStyle)
+                    Text(text = product.material, style = bodyStyle)
+                }
+            }
         }
+
+
+        if (product.continent.isNotBlank()) {
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(text = "Continente", style = sectionTitleStyle)
+                    Text(text = product.continent, style = bodyStyle)
+                }
+            }
+        }
+
 
         item {
-            Text(text = "talla", style = MaterialTheme.typography.titleMedium)
+            Text(text = "Tallas disponibles", style = sectionTitleStyle)
         }
 
         item {
@@ -94,7 +121,7 @@ fun ProductDetailScreen(
                     FilterChip(
                         selected = selected,
                         onClick = { selectedSize = size },
-                        label = { Text(size) }
+                        label = { Text(size, style = bodyStyle) }
                     )
                 }
             }
@@ -104,10 +131,10 @@ fun ProductDetailScreen(
             Button(
                 onClick = {
                     if (selectedSize == null) {
-                        Toast.makeText(context, "selecciona una talla", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Selecciona una talla", Toast.LENGTH_SHORT).show()
                     } else {
                         onAddToCart(selectedSize!!)
-                        Toast.makeText(context, "agregado al carrito", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Agregado al carrito", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -116,16 +143,7 @@ fun ProductDetailScreen(
                     contentColor = Color.White
                 )
             ) {
-                Text("agregar al carrito")
-            }
-        }
-
-        item {
-            OutlinedButton(
-                onClick = onGoToCart,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("ver carrito")
+                Text("agregar al carrito", style = bodyStyle.copy(color = Color.White))
             }
         }
     }
