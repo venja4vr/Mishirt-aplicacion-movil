@@ -1,6 +1,6 @@
 package com.example.mishirt_movil.model
 
-data class UserUiState (
+data class UserUiState(
     val nombre: String = "",
     val correo: String = "",
     val direccion: String = "",
