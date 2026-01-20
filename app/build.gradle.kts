@@ -44,6 +44,7 @@ android {
 dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation(libs.androidx.core.ktx)

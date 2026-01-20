@@ -1,9 +1,10 @@
 package com.example.mishirt_movil.model
 
-data class UserUiState (
+data class UserUiState(
     val nombre: String = "",
     val correo: String = "",
     val direccion: String = "",
     val clave: String = "",
-    val cuentaCreada: Boolean = false
+    val cuentaCreada: Boolean = false,
+    val photoUri: String? = null
 )
