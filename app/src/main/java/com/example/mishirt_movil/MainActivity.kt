@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +41,9 @@ import com.example.mishirt_movil.viewmodel.SettingsViewModel
 import com.example.mishirt_movil.viewmodel.UserViewModel
 import android.graphics.Color as AndroidColor
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import com.example.mishirt_movil.model.SettingsUiState
 
 
 class MainActivity : ComponentActivity() {
@@ -53,11 +57,25 @@ class MainActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         setContent {
+
             val userVm: UserViewModel = viewModel()
             val userState = userVm.uiState.collectAsState().value
 
             val settingsVm: SettingsViewModel = viewModel()
             val settingsState = settingsVm.uiState.collectAsState().value
+
+            val window = this@MainActivity.window
+            val isDarkTheme = settingsState.isDarkTheme
+
+            SideEffect {
+                // siempre transparente
+                window.statusBarColor = Color.Transparent.toArgb()
+
+                WindowInsetsControllerCompat(window, window.decorView)
+                    .isAppearanceLightStatusBars = !isDarkTheme
+            }
+
+
 
             Mishirt_movilTheme(darkTheme = settingsState.isDarkTheme) {
                 val navController = rememberNavController()
@@ -66,6 +84,7 @@ class MainActivity : ComponentActivity() {
                 val currentRoute = backStackEntry?.destination?.route
 
                 Scaffold(
+                    containerColor = Color.Transparent,
                     topBar = {
                         when (currentRoute) {
 
