@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ fun AppTopBar(
     title: String = "MISHirt",
     onTitleClick: () -> Unit,
     onCatalogClick: () -> Unit,
+    onCartClick: () -> Unit,
     onProfileClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -36,7 +38,6 @@ fun AppTopBar(
             )
         },
         actions = {
-            // Catálogo
             IconButton(onClick = onCatalogClick) {
                 Icon(
                     imageVector = Icons.Filled.Storefront,
@@ -45,7 +46,14 @@ fun AppTopBar(
                 )
             }
 
-            // Perfil / Login
+            IconButton(onClick = onCartClick) {
+                Icon(
+                    imageVector = Icons.Filled.ShoppingCart,
+                    contentDescription = "carrito",
+                    tint = Color.White
+                )
+            }
+
             IconButton(onClick = onProfileClick) {
                 Icon(
                     imageVector = Icons.Filled.AccountCircle,
@@ -54,7 +62,6 @@ fun AppTopBar(
                 )
             }
 
-            // Ajustes
             IconButton(onClick = onSettingsClick) {
                 Icon(
                     imageVector = Icons.Filled.Settings,

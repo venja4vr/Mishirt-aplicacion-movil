@@ -1,122 +1,132 @@
 package com.example.mishirt_movil.view
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.mishirt_movil.model.ProductUi
-import com.example.mishirt_movil.ui.theme.ZalandoSansExpanded
+import com.example.mishirt_movil.ui.theme.MossGreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(
     product: ProductUi,
-    modifier: Modifier = Modifier
+    onAddToCart: (String) -> Unit,
+    onGoToCart: () -> Unit
 ) {
-    val scroll = rememberScrollState()
-    val selectedSize = remember { mutableStateOf(product.sizes.firstOrNull()) }
+    val context = LocalContext.current
+    var selectedSize by rememberSaveable { mutableStateOf<String?>(null) }
 
-    Column(
-        modifier = modifier
-            .verticalScroll(scroll)
-            .padding(16.dp),
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Image(
-            painter = painterResource(id = product.imageRes),
-            contentDescription = product.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(320.dp)
-        )
 
-        Text(
-            text = product.title,
-            style = MaterialTheme.typography.headlineSmall.copy(fontFamily = ZalandoSansExpanded)
-        )
+        item {
+            Card(shape = RoundedCornerShape(16.dp)) {
+                Image(
+                    painter = painterResource(id = product.imageRes),
+                    contentDescription = product.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(320.dp)
+                )
+            }
+        }
 
-        Text(
-            text = product.price,
-            style = MaterialTheme.typography.titleLarge.copy(fontFamily = ZalandoSansExpanded),
-            color = MaterialTheme.colorScheme.primary
-        )
+        item {
+            Text(text = product.title, style = MaterialTheme.typography.titleLarge)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = product.price,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
 
         if (product.description.isNotBlank()) {
-            Text(
-                text = "Descripción",
-                style = MaterialTheme.typography.titleMedium.copy(fontFamily = ZalandoSansExpanded)
-            )
-            Text(
-                text = product.description,
-                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = ZalandoSansExpanded)
-            )
+            item { Text(text = product.description) }
         }
 
         if (product.material.isNotBlank()) {
-            Text(
-                text = "Material",
-                style = MaterialTheme.typography.titleMedium.copy(fontFamily = ZalandoSansExpanded)
-            )
-            Text(
-                text = product.material,
-                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = ZalandoSansExpanded)
-            )
+            item { Text(text = "material: ${product.material}") }
         }
 
-        if (product.continent.isNotBlank()) {
-            Text(
-                text = "Continente",
-                style = MaterialTheme.typography.titleMedium.copy(fontFamily = ZalandoSansExpanded)
-            )
-            Text(
-                text = product.continent,
-                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = ZalandoSansExpanded)
-            )
+        item {
+            Text(text = "talla", style = MaterialTheme.typography.titleMedium)
         }
 
-        if (product.sizes.isNotEmpty()) {
-            Text(
-                text = "Tallas disponibles",
-                style = MaterialTheme.typography.titleMedium.copy(fontFamily = ZalandoSansExpanded)
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                product.sizes.forEach { size ->
-                    val isSelected = selectedSize.value == size
-
-                    OutlinedButton(
-                        onClick = { selectedSize.value = size }
-                    ) {
-                        Text(
-                            text = if (isSelected) "✓ $size" else size,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontFamily = ZalandoSansExpanded)
-                        )
-                    }
+        item {
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(product.sizes) { size ->
+                    val selected = selectedSize == size
+                    FilterChip(
+                        selected = selected,
+                        onClick = { selectedSize = size },
+                        label = { Text(size) }
+                    )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        item {
+            Button(
+                onClick = {
+                    if (selectedSize == null) {
+                        Toast.makeText(context, "selecciona una talla", Toast.LENGTH_SHORT).show()
+                    } else {
+                        onAddToCart(selectedSize!!)
+                        Toast.makeText(context, "agregado al carrito", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MossGreen,
+                    contentColor = Color.White
+                )
+            ) {
+                Text("agregar al carrito")
+            }
+        }
+
+        item {
+            OutlinedButton(
+                onClick = onGoToCart,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("ver carrito")
+            }
+        }
     }
 }

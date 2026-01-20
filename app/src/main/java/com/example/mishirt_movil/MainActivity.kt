@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,17 +31,18 @@ import com.example.mishirt_movil.ui.theme.MossGreen
 import com.example.mishirt_movil.view.AppTopBar
 import com.example.mishirt_movil.view.AuthScreen
 import com.example.mishirt_movil.view.CatalogScreen
+import com.example.mishirt_movil.view.CartScreen
 import com.example.mishirt_movil.view.HomeScreen
 import com.example.mishirt_movil.view.ProductDetailScreen
 import com.example.mishirt_movil.view.ProfileScreen
 import com.example.mishirt_movil.view.SettingsScreen
+import com.example.mishirt_movil.viewmodel.CartViewModel
 import com.example.mishirt_movil.viewmodel.CatalogViewModel
 import com.example.mishirt_movil.viewmodel.HomeViewModel
 import com.example.mishirt_movil.viewmodel.SettingsViewModel
 import com.example.mishirt_movil.viewmodel.UserViewModel
 import android.graphics.Color as AndroidColor
 import androidx.compose.ui.unit.dp
-
 
 class MainActivity : ComponentActivity() {
 
@@ -59,6 +61,9 @@ class MainActivity : ComponentActivity() {
             val settingsVm: SettingsViewModel = viewModel()
             val settingsState = settingsVm.uiState.collectAsState().value
 
+            val cartVm: CartViewModel = viewModel()
+            val cartState = cartVm.uiState.collectAsState().value
+
             Mishirt_movilTheme(darkTheme = settingsState.isDarkTheme) {
                 val navController = rememberNavController()
 
@@ -69,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         when (currentRoute) {
 
-                            "home" -> {
+                            "home", "profile" -> {
                                 AppTopBar(
                                     onTitleClick = {
                                         navController.navigate("home") {
@@ -78,6 +83,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                     },
                                     onCatalogClick = { navController.navigate("catalog") },
+                                    onCartClick = { navController.navigate("cart") },
                                     onProfileClick = {
                                         if (userState.cuentaCreada) {
                                             navController.navigate("profile")
@@ -119,6 +125,15 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     },
+                                    actions = {
+                                        IconButton(onClick = { navController.navigate("cart") }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.ShoppingCart,
+                                                contentDescription = "carrito",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    },
                                     colors = TopAppBarDefaults.topAppBarColors(
                                         containerColor = MossGreen
                                     )
@@ -137,6 +152,33 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     },
+                                    actions = {
+                                        IconButton(onClick = { navController.navigate("cart") }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.ShoppingCart,
+                                                contentDescription = "carrito",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    },
+                                    colors = TopAppBarDefaults.topAppBarColors(
+                                        containerColor = MossGreen
+                                    )
+                                )
+                            }
+
+                            "cart" -> {
+                                TopAppBar(
+                                    title = { Text(text = "Carrito", color = Color.White) },
+                                    navigationIcon = {
+                                        IconButton(onClick = { navController.popBackStack() }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.ArrowBack,
+                                                contentDescription = "Volver",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    },
                                     colors = TopAppBarDefaults.topAppBarColors(
                                         containerColor = MossGreen
                                     )
@@ -144,7 +186,7 @@ class MainActivity : ComponentActivity() {
                             }
 
                             else -> {
-
+                                // settings usa su propio header interno
                             }
                         }
                     }
@@ -188,13 +230,40 @@ class MainActivity : ComponentActivity() {
                             val product = productId?.let { ProductsRepository.getById(it) }
 
                             if (product != null) {
-                                ProductDetailScreen(product = product)
+                                ProductDetailScreen(
+                                    product = product,
+                                    onAddToCart = { size ->
+                                        cartVm.add(product, size)
+                                    },
+                                    onGoToCart = {
+                                        navController.navigate("cart")
+                                    }
+                                )
                             } else {
                                 Text(
                                     text = "Producto no encontrado",
                                     modifier = Modifier.padding(16.dp)
                                 )
                             }
+                        }
+
+                        composable("cart") {
+                            CartScreen(
+                                items = cartState.items,
+                                totalText = cartVm.formatCLP(cartVm.totalCLP(cartState.items)),
+                                formatPrice = cartVm::formatCLP,
+                                onIncrease = cartVm::increase,
+                                onDecrease = cartVm::decrease,
+                                onRemove = cartVm::remove,
+                                onClear = cartVm::clear,
+                                onBuy = {
+                                    cartVm.clear()
+                                    navController.navigate("home") {
+                                        popUpTo("home") { inclusive = false }
+                                        launchSingleTop = true
+                                    }
+                                }
+                            )
                         }
 
                         composable("settings") {
