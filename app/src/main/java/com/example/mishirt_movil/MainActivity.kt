@@ -294,7 +294,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("profile") {
-                            ProfileScreen(state = userState)
+                            ProfileScreen(
+                                state = userState,
+                                onSetPhoto = userVm::setPhoto
+                            )
                         }
                     }
                 }

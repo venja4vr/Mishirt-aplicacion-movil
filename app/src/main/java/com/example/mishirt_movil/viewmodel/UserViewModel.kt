@@ -33,4 +33,9 @@ class UserViewModel : ViewModel() {
             _uiState.value = s.copy(cuentaCreada = true)
         }
     }
+
+    fun setPhoto(uri: String) {
+        _uiState.value = _uiState.value.copy(photoUri = uri)
+    }
+
 }

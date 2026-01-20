@@ -5,5 +5,6 @@ data class UserUiState (
     val correo: String = "",
     val direccion: String = "",
     val clave: String = "",
-    val cuentaCreada: Boolean = false
+    val cuentaCreada: Boolean = false,
+    val photoUri: String? = null
 )
