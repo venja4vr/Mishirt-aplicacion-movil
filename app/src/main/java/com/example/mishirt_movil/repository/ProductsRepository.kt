@@ -23,7 +23,7 @@ object ProductsRepository {
             title = "Camiseta Japón",
             price = "$21.990",
             imageRes = R.drawable.shirt_japan,
-            description = "Camiseta de la selección de Japón 2025.",
+            description = "Azul, Comodo, Uso diario.",
             material = "Poliéster deportivo (transpirable)",
             continent = "Asia",
             sizes = listOf("S", "M", "L", "XL"),

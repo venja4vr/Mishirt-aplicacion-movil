@@ -76,7 +76,11 @@ fun CatalogScreen(
         filteredByContinent
     } else {
         val q = query.trim().lowercase()
-        filteredByContinent.filter { it.title.lowercase().contains(q) }
+        // AHORA BUSCA EN TÍTULO O EN LA DESCRIPCIÓN
+        filteredByContinent.filter {
+            it.title.lowercase().contains(q) ||
+                    it.description.lowercase().contains(q)
+        }
     }
 
     Column(
