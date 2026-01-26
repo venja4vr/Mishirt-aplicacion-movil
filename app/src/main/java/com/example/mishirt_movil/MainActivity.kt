@@ -300,11 +300,15 @@ class MainActivity : ComponentActivity() {
                                 onConfirm = {
                                     cartVm.clear()
                                     checkoutVm.reset()
+                                },
+                                onGoHome = {
                                     navController.navigate("home") {
                                         popUpTo("home") { inclusive = false }
                                         launchSingleTop = true
                                     }
                                 }
+
+
                             )
 
                         }
