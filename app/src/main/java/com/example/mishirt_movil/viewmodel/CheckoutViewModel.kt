@@ -43,10 +43,9 @@ class CheckoutViewModel : ViewModel() {
             try {
                 val list = dpaRepository.getComunas()
 
-                // ✅ Logcat para demostrar consumo de API
+                // Logcat para demostrar consumo de API
                 Log.d("API_COMUNAS", "Comunas cargadas: ${list.size}. Ej: ${list.firstOrNull()?.nombre}")
 
-                // Si el usuario ya tenía texto en "city", intenta calzar la comuna
                 val matched = list.firstOrNull {
                     it.nombre.equals(_uiState.value.city, ignoreCase = true)
                 }
@@ -81,7 +80,6 @@ class CheckoutViewModel : ViewModel() {
         recalc()
     }
 
-    // Fallback: si en algún momento usas input manual
     fun onCityChange(value: String) {
         val current = _uiState.value
         _uiState.value = current.copy(city = value, selectedComuna = null)
@@ -97,9 +95,7 @@ class CheckoutViewModel : ViewModel() {
         recalc()
     }
 
-    /**
-     * Si el usuario ya tiene dirección guardada, se copia solo si el campo está vacío.
-     */
+
     fun setInitialAddressIfEmpty(value: String) {
         val current = _uiState.value
         if (current.address.isBlank() && value.isNotBlank()) {
