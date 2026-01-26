@@ -47,7 +47,7 @@ fun CartScreen(
     onDecrease: (String, String) -> Unit,
     onRemove: (String, String) -> Unit,
     onClear: () -> Unit,
-    onBuy: () -> Unit
+    onCheckout: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -113,8 +113,8 @@ fun CartScreen(
 
             Button(
                 onClick = {
-                    Toast.makeText(context, "gracias por su compra", Toast.LENGTH_SHORT).show()
-                    onBuy()
+                    Toast.makeText(context, "continuar a checkout", Toast.LENGTH_SHORT).show()
+                    onCheckout()
                 },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
@@ -122,7 +122,7 @@ fun CartScreen(
                     contentColor = Color.White
                 )
             ) {
-                Text("comprar")
+                Text("continuar")
             }
         }
     }

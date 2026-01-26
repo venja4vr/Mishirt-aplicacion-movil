@@ -42,6 +42,9 @@ import com.example.mishirt_movil.viewmodel.HomeViewModel
 import com.example.mishirt_movil.viewmodel.SettingsViewModel
 import com.example.mishirt_movil.viewmodel.UserViewModel
 import android.graphics.Color as AndroidColor
+import com.example.mishirt_movil.view.CheckoutScreen
+import com.example.mishirt_movil.viewmodel.CheckoutViewModel
+
 import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
@@ -167,6 +170,25 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
+                            "checkout" -> {
+                                TopAppBar(
+                                    title = { Text(text = "Checkout", color = Color.White) },
+                                    navigationIcon = {
+                                        IconButton(onClick = { navController.popBackStack() }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.ArrowBack,
+                                                contentDescription = "Volver",
+                                                tint = Color.White
+                                            )
+                                        }
+                                    },
+                                    colors = TopAppBarDefaults.topAppBarColors(
+                                        containerColor = MossGreen
+                                    )
+                                )
+                            }
+
+
                             "cart" -> {
                                 TopAppBar(
                                     title = { Text(text = "Carrito", color = Color.White) },
@@ -253,15 +275,40 @@ class MainActivity : ComponentActivity() {
                                 onDecrease = cartVm::decrease,
                                 onRemove = cartVm::remove,
                                 onClear = cartVm::clear,
-                                onBuy = {
+                                onCheckout = {
+                                    navController.navigate("checkout")
+                                }
+                            )
+                        }
+
+                        composable("checkout") {
+                            val checkoutVm: CheckoutViewModel = viewModel()
+                            val checkoutState = checkoutVm.uiState.collectAsState().value
+
+                            // Prefill de dirección si el usuario ya la tiene guardada
+                            checkoutVm.setInitialAddressIfEmpty(userState.direccion)
+
+                            CheckoutScreen(
+                                items = cartState.items,
+                                subtotalCLP = cartVm.totalCLP(cartState.items),
+                                formatPrice = cartVm::formatCLP,
+                                state = checkoutState,
+                                onDeliveryMethodChange = checkoutVm::setDeliveryMethod,
+                                onAddressChange = checkoutVm::onAddressChange,
+                                onComunaSelected = checkoutVm::onComunaSelected,
+                                onRetryComunas = checkoutVm::fetchComunas,
+                                onConfirm = {
                                     cartVm.clear()
+                                    checkoutVm.reset()
                                     navController.navigate("home") {
                                         popUpTo("home") { inclusive = false }
                                         launchSingleTop = true
                                     }
                                 }
                             )
+
                         }
+
 
                         composable("settings") {
                             SettingsScreen(
