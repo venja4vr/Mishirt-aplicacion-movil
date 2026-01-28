@@ -6,20 +6,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.mishirt_movil.model.CheckoutUiState
 import com.example.mishirt_movil.model.Comuna
 import com.example.mishirt_movil.model.DeliveryMethod
+import com.example.mishirt_movil.repository.ComunaRepository
 import com.example.mishirt_movil.repository.DpaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CheckoutViewModel : ViewModel() {
-
-    private val dpaRepository = DpaRepository()
+class CheckoutViewModel @JvmOverloads constructor(
+    private val comunaRepository: ComunaRepository = DpaRepository(),
+    private val autoFetch: Boolean = true
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState.asStateFlow()
 
-    // Comunas cercanas (regla simple para costo de envío)
     private val nearbyComunas = setOf(
         "Viña del Mar",
         "Valparaíso",
@@ -29,22 +30,19 @@ class CheckoutViewModel : ViewModel() {
     )
 
     init {
-        fetchComunas()
+        if (autoFetch) fetchComunas()
     }
 
     fun fetchComunas() {
         viewModelScope.launch {
-            val current = _uiState.value
-            _uiState.value = current.copy(
+            _uiState.value = _uiState.value.copy(
                 isLoadingComunas = true,
                 comunasError = null
             )
 
             try {
-                val list = dpaRepository.getComunas()
-
-                // Logcat para demostrar consumo de API
-                Log.d("API_COMUNAS", "Comunas cargadas: ${list.size}. Ej: ${list.firstOrNull()?.nombre}")
+                val list = comunaRepository.getComunas()
+                runCatching { Log.d("API_COMUNAS", "Comunas cargadas: ${list.size}") }
 
                 val matched = list.firstOrNull {
                     it.nombre.equals(_uiState.value.city, ignoreCase = true)
@@ -56,7 +54,7 @@ class CheckoutViewModel : ViewModel() {
                     isLoadingComunas = false
                 )
             } catch (e: Exception) {
-                Log.e("API_COMUNAS", "Error cargando comunas", e)
+                runCatching { Log.e("API_COMUNAS", "Error cargando comunas", e) }
 
                 _uiState.value = _uiState.value.copy(
                     isLoadingComunas = false,
@@ -69,33 +67,24 @@ class CheckoutViewModel : ViewModel() {
     }
 
     fun setDeliveryMethod(method: DeliveryMethod) {
-        val current = _uiState.value
-        _uiState.value = current.copy(deliveryMethod = method)
+        _uiState.value = _uiState.value.copy(deliveryMethod = method)
         recalc()
     }
 
     fun onAddressChange(value: String) {
-        val current = _uiState.value
-        _uiState.value = current.copy(address = value)
-        recalc()
-    }
-
-    fun onCityChange(value: String) {
-        val current = _uiState.value
-        _uiState.value = current.copy(city = value, selectedComuna = null)
+        _uiState.value = _uiState.value.copy(address = value)
         recalc()
     }
 
     fun onComunaSelected(comuna: Comuna) {
-        val current = _uiState.value
-        _uiState.value = current.copy(
+        _uiState.value = _uiState.value.copy(
             selectedComuna = comuna,
             city = comuna.nombre
         )
         recalc()
     }
 
-
+    // ESTE ES EL MÉTODO QUE TU MainActivity ESTÁ LLAMANDO
     fun setInitialAddressIfEmpty(value: String) {
         val current = _uiState.value
         if (current.address.isBlank() && value.isNotBlank()) {

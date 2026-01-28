@@ -3,9 +3,9 @@ package com.example.mishirt_movil.repository
 import com.example.mishirt_movil.data.remote.DpaRetrofitInstance
 import com.example.mishirt_movil.model.Comuna
 
-class DpaRepository {
+class DpaRepository : ComunaRepository {
 
-    suspend fun getComunas(): List<Comuna> {
+    override suspend fun getComunas(): List<Comuna> {
         val response = DpaRetrofitInstance.api.getRegionesComunas()
 
         return response.regiones
