@@ -239,11 +239,6 @@ fun CheckoutScreen(
         if (pedidoConfirmado) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "QR del pedido",
-                style = MaterialTheme.typography.titleMedium
-            )
-
             Spacer(modifier = Modifier.height(12.dp))
 
             AsyncImage(
